@@ -1,0 +1,107 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 확인 버튼 (왼쪽, 파란색) -->
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
+        android:text="즐겨찾기"
+        android:backgroundTint="#0000F5"
+        android:textColor="#FFFFFF" />
+
+    <!-- 주소 입력 -->
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/button2"
+        android:layout_toStartOf="@id/button_search"
+        android:layout_alignTop="@id/button2"
+        android:hint="한글 주소 입력"
+        android:inputType="textPersonName"
+        android:ems="10" />
+
+    <ImageButton
+        android:id="@+id/button_search"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:contentDescription="검색"
+        android:src="@drawable/ic_search" />
+
+
+    <!-- 지도 영역 -->
+    <FrameLayout
+        android:id="@+id/map_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/button2" />
+
+    <!-- 확대 버튼 -->
+    <ImageButton
+        android:id="@+id/button_zoom_in"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="620dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#3a5994"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_zoom_in"
+        android:contentDescription="확대" />
+
+    <!-- 축소 버튼 -->
+    <ImageButton
+        android:id="@+id/button_zoom_out"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="570dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#3a5994"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_zoom_out"
+        android:contentDescription="축소" />
+
+    <!-- 현위치 버튼 -->
+    <ImageButton
+        android:id="@+id/button_my_location"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="620dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#3a5994"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_my_location"
+        android:contentDescription="현위치"/>
+
+
+    <!-- 즐겨찾기 목록 버튼 -->
+    <ImageButton
+        android:id="@+id/button_favorite_list"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="570dp"
+        android:layout_alignParentBottom="true"
+        android:backgroundTint="#3a5994"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_star"
+        android:contentDescription="즐겨찾기 목록" />
+
+
+
+</RelativeLayout>
