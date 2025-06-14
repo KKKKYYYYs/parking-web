@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>주차장 예약</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Kakao Map API -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4de4178bee8f55fed343e03f6d0d803"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="w-full h-screen relative">
+    <!-- 지도 -->
+    <div id="map" class="w-full h-full"></div>
+
+    <!-- 예약 목록 보기 버튼 -->
+    <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+      <button id="reserve-button" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+        예약 목록 보기
+      </button>
+    </div>
+  </div>
+
+  <!-- 지도 및 예약 목록 버튼 동작 스크립트 -->
+  <script type="module">
+    import { db } from "./scripts/firebase-config.js";
+    import { ref, get } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+
+    const mapContainer = document.getElementById('map');
+    const mapOption = {
+      center: new kakao.maps.LatLng(36.32, 127.43), // 대전 중심
+      level: 6
+    };
+    const map = new kakao.maps.Map(mapContainer, mapOption);
+
+    const markerClickCount = new Map();
+
+    try {
+      const snapshot = await get(ref(db));
+      const data = snapshot.val();
+
+      if (data) {
+        Object.values(data).forEach(lot => {
+          const lat = lot["위도"];
+          const lng = lot["경도"];
+          const markerPosition = new kakao.maps.LatLng(lat, lng);
+
+          const marker = new kakao.maps.Marker({
+            position: markerPosition,
+            map: map
+          });
+
+          const content = `
+            <div style="padding:8px; font-size:13px;">
+              <strong>${lot["주차장_명"]}</strong><br>
+              📍 ${lot["소재지"]}<br>
+              🅿️ 주차면: ${lot["주차면_수"]}면<br>
+              📅 운영: ${lot["운영개시_일"]}
+            </div>
+          `;
+          const infowindow = new kakao.maps.InfoWindow({ content });
+
+          kakao.maps.event.addListener(marker, 'click', () => {
+            const name = lot["주차장_명"];
+            const count = markerClickCount.get(name) || 0;
+            markerClickCount.set(name, count + 1);
+
+            if (count === 0) {
+              infowindow.open(map, marker); // 1번째 클릭 → 정보창 표시
+            } else {
+              // 2번째 클릭 → 예약 페이지로 이동
+              const query = `name=${encodeURIComponent(name)}&address=${encodeURIComponent(lot["소재지"])}&spaces=${lot["주차면_수"]}&start=${encodeURIComponent(lot["운영개시_일"])}`;
+              window.location.href = `reserve.html?${query}`;
+            }
+
+            // 3초 후 클릭 수 초기화
+            setTimeout(() => markerClickCount.set(name, 0), 3000);
+          });
+        });
+      } else {
+        alert("주차장 데이터를 불러오지 못했습니다.");
+      }
+    } catch (err) {
+      console.error("주차장 데이터 로드 오류:", err);
+      alert("데이터를 불러오는 중 오류가 발생했습니다.");
+    }
+
+    // 예약 목록 보기 버튼 클릭 시 예약 목록 페이지로 이동
+    document.getElementById("reserve-button").addEventListener("click", () => {
+      window.location.href = "reservation-list.html";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!-- reservation-list.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>예약 목록</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-bold mb-4">전체 예약 목록</h1>
+    <div id="reservation-list" class="space-y-4"></div>
+  </div>
+
+  <script type="module">
+    import { db } from "./scripts/firebase-config.js";
+    import { ref, get } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+
+    const listContainer = document.getElementById("reservation-list");
+
+    async function loadReservations() {
+      try {
+        const snapshot = await get(ref(db, "reservations"));
+        const data = snapshot.val();
+
+        if (!data) {
+          listContainer.innerHTML = "<p>예약된 내역이 없습니다.</p>";
+          return;
+        }
+
+        for (const lotName in data) {
+          const reservations = data[lotName];
+          const card = document.createElement("div");
+          card.className = "border p-4 rounded bg-gray-50";
+
+          const header = `<h2 class="font-semibold mb-2">🅿️ ${lotName}</h2>`;
+          const entries = Object.values(reservations)
+            .map(r => `<p>👤 ${r.name} | 📅 ${r.date} | 🕒 ${r.time}</p>`)
+            .join("");
+
+          card.innerHTML = header + entries;
+          listContainer.appendChild(card);
+        }
+      } catch (err) {
+        console.error("예약 목록 로드 오류:", err);
+        listContainer.innerHTML = "<p class='text-red-500'>❌ 예약 목록을 불러오는 중 오류가 발생했습니다.</p>";
+      }
+    }
+
+    loadReservations();
+  </script>
+</body>
+</html>
